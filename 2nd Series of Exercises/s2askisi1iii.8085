@@ -1,0 +1,30 @@
+IN 10H
+
+;ARXIKOPOIHSH
+
+MVI A,FFH
+MVI C,00H
+;EPANALHPTIKH
+
+LOOP1: CPI 20H ; if A<20 ->telos
+	JC MY_END ;  
+	JMP CHECK_70H_SMALLER	
+
+
+CHECK_70H_SMALLER: CPI 70H
+		     JC DEKTO
+		     JZ DEKTO
+		     DCR A ;    A--
+		     JMP LOOP1
+
+DEKTO: 
+		   INR C
+                 DCR A ;    A--
+		   JMP LOOP1
+
+			
+	
+
+MY_END:	
+	     RST 1
+	     END

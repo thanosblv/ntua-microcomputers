@@ -1,0 +1,64 @@
+IN 10H ;
+MVI B,10H ;
+MVI D,01H ; for the step
+MVI E,00H ; flag remebering direction when 1st_LSB=ON
+
+MVI A,01H ;
+CMA ;
+STA 3000H ; initialization
+CALL DELB ;
+
+MASTER: LDA 2000H
+	 ANI 02H ;      apomonwsh tou 2nd_LSB
+	 CPI 00H
+	 JNZ STABLE ;   if 2nd_LSB!=0->ON go to STABLE
+	 LDA 2000H   
+	 ANI 01H ;      apomonwsh tou 1st_lSB
+	 CPI 00H ;      if 1st_LSB!=0->ON go to POREIA_2
+	 JNZ POREIA_2 ;
+	 JMP POREIA_1 ; else if 1st_LSB->OFF go to POREIA_1
+	 
+STABLE: MVI A,FEH ;    A<- (1)'
+	 STA 3000H ;    opposite logic, show
+	 CALL DELB ;
+	 JMP MASTER ;   all over again
+
+POREIA_1: MVI E,00H ;
+	   MOV A,D ;
+	   RLC ;        step
+	   MOV D,A ;
+	   CMA ;
+	   STA 3000H ;
+	   CALL DELB ;
+	   JMP MASTER ;
+
+POREIA_2: 
+	
+	LOOP1: MOV A,E ;
+		CPI 00H ;
+		JNZ LOOP2  ;  if a!=0 go to loop2
+	LOOP3:	MVI E,00H ;
+		MOV A,D ;  
+		CPI 80H ;
+		JNC LOOP2 ; if A > 255 go to loop2
+		RLC ;	    else step <- <-   
+		MOV D,A
+		CMA 
+		STA 3000H ; opposite logic, show
+		CALL DELB ; 
+		JMP MASTER ;
+
+	LOOP2: MOV A,D ;
+		MVI E,01H ;
+		CPI 01H ;
+		JZ LOOP3 ; if A==1 go to loop3
+		RRC ;     else step -> ->
+		MOV D,A
+		CMA 
+		STA 3000H ;
+		CALL DELB ;
+		JMP MASTER ;
+
+END
+		
+		

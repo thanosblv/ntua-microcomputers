@@ -1,0 +1,97 @@
+ARXH:		IN 10H		
+		
+	; Tha xrhsimopoihsoume:
+		;K1 = 32H (50)
+		;K2 = 64H (100)
+		;K3 = C8H (200)
+		
+		MVI A,0DH		; ENABLE RST6.5
+		SIM
+		EI
+
+WAIT:		JMP WAIT		; INF WAIT FOR INTERRUPT
+
+INTR_ROUTINE: MVI A,0DH
+		SIM
+		EI			; ENABLE INTERRUPT AGAIN
+
+		PUSH PSW
+		PUSH B
+		PUSH D			
+
+		LXI H,0A00H		
+		MVI M,10H		; keno dejia
+
+		INX H
+		MVI M,10H		; keno dejia
+
+		INX H
+		MVI M,10H		; keno dejia
+
+		INX H
+		MVI M,10H		; keno dejia
+
+		INX H
+		INX H
+		CALL KIND
+		MOV M,A		; MSB sto pio aristero 7-segment
+
+		RLC
+		RLC
+		RLC
+		RLC
+		MOV B,A		; MSB sto B metatopismeno
+
+		DCX H
+		CALL KIND
+		MOV M,A		; LSB sto 2o pio aristero 7-segment
+
+		ADD B			; A <- A + B = MSB(metatopismeno) + LSB 
+
+		POP D			; epanaferw D = K2 kai E = K3
+		POP B			; epanaferw C = K1		
+
+
+
+		MOV B,A		; B <- o arithmos		
+		POP PSW
+		MOV A,B		; A <- o arithmos
+
+		MVI C,32H
+		CMP C			; arithmos <= K1
+		JC PERIOXH_0
+		JZ PERIOXH_0
+
+		MVI D,64H
+		CMP D			; arithmos <= K2
+		JC PERIOXH_1
+		JZ PERIOXH_1
+
+		MVI E,C8H
+		CMP E			; arithmos  <= K3
+		JC PERIOXH_2
+		JZ PERIOXH_2
+
+		JMP PERIOXH_3		; arithmos > K3
+
+
+PERIOXH_0:	MVI A,FEH
+		JMP ROUTINE_END
+PERIOXH_1:	MVI A,FDH
+		JMP ROUTINE_END
+PERIOXH_2:	MVI A,FBH
+		JMP ROUTINE_END
+PERIOXH_3:	MVI A,F7H
+		JMP ROUTINE_END
+
+ROUTINE_END:	STA 3000H		; anabei to katallhlo bit
+		LXI D,0A00H
+		CALL STDM
+
+SHOW_LOOP:
+	CALL DCD			; emfanizetai h eisodos sto 7-segment
+	MVI B,01H		
+	JMP SHOW_LOOP
+
+
+END

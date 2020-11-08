@@ -1,0 +1,20 @@
+IN 10H
+
+;ARXIKOPOIHSH
+
+MVI A,FFH ;A<-255
+MVI H,09H ;
+MVI L,00H ; for the address
+
+;EPANALHPTIKH
+
+LOOP1: CPI 00H ; if A<0 ->telos
+	JZ MY_END ;  else ->stay in the loop1
+	MOV M,A ;   M <- A
+	INR L ;      epomeni thesi mnimis	
+	DCR A ;    A--	
+	JMP LOOP1 ;   again
+
+MY_END:  MOV M,A    
+
+END

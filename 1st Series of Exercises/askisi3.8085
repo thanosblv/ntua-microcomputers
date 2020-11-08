@@ -1,0 +1,30 @@
+START: LDA 2000H              ;READ INPUT
+	MVI D,FFH                     ;INITIALIZE B
+	CPI 63H                       ;COMPARE WITH 99  (= 63 HEX)
+	JNC GREATER_THAN_100          ;GO TO WHAT HAPPENS IF INPUT>100
+
+GREATER_THAN_100:             ;LOOP THAT PERFORMS (INPUT MOD 100)
+	SUI 64H                       ;SUBSTRACTION OF 100 UNTIL NEGATIVE
+	JNC GREATER_THAN_100            
+	ADI 64H                       ;WHEN NEGATIVE , ADD 100 
+	JMP CALCULATE                 ;NOW OUR NUMBER IS < 100
+
+
+CALCULATE:
+	INR D				   ;COUNT TENS
+	SUI 0AH			   ;SUBSTRACT 10 UNTIL NEGATIVE
+	JNC CALCULATE
+	ADI 0AH			   ;ADD 10 (A NOW CONTAINS THE UNITS)
+	MOV C,A                       ;STORE A IN REGISTER C
+	SUB A                         ;A = 0
+	ADD D                         ;A = "HOW MANY TENS WE HAVE"
+	RLC                           ;MAKE THE 4 MSBs SO THAT THEY CONTAIN THE TENS
+	RLC
+	RLC
+	RLC
+	ADD C                         ;FILL WITH THE UNITS IN THE 4 LSBs
+	CMA                           ;PRINT RESULT
+	STA 3000H
+	JMP START
+
+	END
