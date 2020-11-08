@@ -1,2 +1,2 @@
 # ntua-microcomputers
-This is a repository for exercises done for the course Introduction to Micro-computers during the 6th semester of ECE @ NTUA.
+This is a repository for exercises done for the course Introduction to Micro-computers during the Spring Semester of the year 2019-2020 at ECE NTUA.
